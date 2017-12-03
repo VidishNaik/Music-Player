@@ -13,26 +13,25 @@
         android:id="@+id/play_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="play"/>
-    <Button
-        android:id="@+id/pause_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="pause"
-        android:layout_below="@id/play_button"/>
+        android:text="Play"/>
     <Button
         android:id="@+id/stop_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="stop"
-        android:layout_below="@id/pause_button"/>
+        android:text="Stop"
+        android:layout_below="@id/play_button"/>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/play_button">
     <Button
         android:id="@+id/volume_up"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Volume up"
         android:layout_marginLeft="40dp"
-        android:layout_toRightOf="@id/play_button"
+        android:layout_marginRight="40dp"
         android:onClick="raise"/>
     <TextView
         android:id="@+id/volume"
@@ -40,17 +39,16 @@
         android:layout_height="wrap_content"
         android:text="5"
         android:textSize="40dp"
-        android:layout_below="@id/volume_up"
-        android:layout_toRightOf="@id/pause_button"
-        android:layout_marginLeft="80dp"
-        />
+        android:layout_centerInParent="true"
+        android:layout_below="@id/volume_up" />
     <Button
         android:id="@+id/volume_down"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Volume Down"
         android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
         android:layout_below="@id/volume"
-        android:layout_toRightOf="@id/stop_button"
         android:onClick="lower"/>
+    </RelativeLayout>
 </RelativeLayout>
