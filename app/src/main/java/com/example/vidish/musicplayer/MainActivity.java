@@ -3,8 +3,10 @@ package com.example.vidish.musicplayer;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,31 +17,58 @@ public class MainActivity extends AppCompatActivity {
     MediaPlayer mediaPlayer;
     TextView volume;
     Button up, down;
+    int songs[] = {R.raw.bohemian_rhapsody, R.raw.in_the_end};
+    int curr = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mediaPlayer = MediaPlayer.create(this, R.raw.bohemian_rhapsody);
+        mediaPlayer = MediaPlayer.create(this, songs[curr]);
         setContentView(R.layout.activity_main);
-
         final Button play = (Button) findViewById(R.id.play_button);
         final Button reset = (Button) findViewById(R.id.stop_button);
+        final Button next = (Button) findViewById(R.id.next_button);
 
         up = (Button) findViewById(R.id.volume_up);
         down = (Button) findViewById(R.id.volume_down);
         reset.setEnabled(false);
+
+        final AudioManager.OnAudioFocusChangeListener focusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int i) {
+                switch (i)
+                {
+                    case (AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK):
+                        mediaPlayer.setVolume(0.2f,0.2f);
+                        break;
+                    case (AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) :
+                        mediaPlayer.pause();
+                        break;
+                    case (AudioManager.AUDIOFOCUS_LOSS) :
+                        mediaPlayer.pause();
+                        break;
+                    case (AudioManager.AUDIOFOCUS_GAIN) :
+                        mediaPlayer.setVolume(1f, 1f);
+                        mediaPlayer.start();
+                        break;
+                }
+            }
+        };
+
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (play.getText().equals("Play")) {
-                    mediaPlayer.start();
+                    int res = audio.requestAudioFocus(focusChangeListener,AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
+                    if(res == AudioManager.AUDIOFOCUS_REQUEST_GRANTED)
+                    {
+                        mediaPlayer.start();
+                    }
                     mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         @Override
                         public void onCompletion(MediaPlayer mp) {
                             Toast.makeText(MainActivity.this, "Song Finished", Toast.LENGTH_SHORT).show();
-                            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.in_the_end);
-                            play.setEnabled(true);
-                            reset.setEnabled(false);
+                            setMediaPlayer(curr++%2);
                         }
                     });
                     reset.setEnabled(true);
@@ -58,10 +87,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mediaPlayer.reset();
-                mediaPlayer=MediaPlayer.create(MainActivity.this,R.raw.bohemian_rhapsody);
+                //mediaPlayer = MediaPlayer.create(MainActivity.this,songs[0]);
                 play.setEnabled(true);
                 play.setText("Play");
                 reset.setEnabled(false);
+                audio.abandonAudioFocus(focusChangeListener);
+            }
+        });
+
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaPlayer.reset();
+                setMediaPlayer((++curr)%2);
+                play.setText("Pause");
+                mediaPlayer.start();
             }
         });
         audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -98,5 +138,14 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Minimum Volume Reached", Toast.LENGTH_SHORT).show();
             down.setEnabled(false);
         }
+    }
+
+    public void setMediaPlayer(int id)
+    {
+        if(mediaPlayer.isPlaying())
+            mediaPlayer.pause();
+        mediaPlayer.reset();
+        mediaPlayer = MediaPlayer.create(getApplicationContext(),songs[id]);
+        mediaPlayer.start();
     }
 }
