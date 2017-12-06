@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onCompletion(MediaPlayer mp) {
                             Toast.makeText(MainActivity.this, "Song Finished", Toast.LENGTH_SHORT).show();
-                            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.bohemian_rhapsody);
+                            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.in_the_end);
                             play.setEnabled(true);
                             reset.setEnabled(false);
                         }
