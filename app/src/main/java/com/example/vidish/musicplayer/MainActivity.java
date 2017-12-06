@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         });
         audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         volume = (TextView) findViewById(R.id.volume);
-        volume.setText(audio.getStreamVolume(AudioManager.STREAM_MUSIC));
+        volume.setText(""+audio.getStreamVolume(AudioManager.STREAM_MUSIC));
         if (audio.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
             down.setEnabled(false);
         }
@@ -76,18 +76,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void raise(View view) {
-        audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0);
-        volume.setText(audio.getStreamVolume(AudioManager.STREAM_MUSIC));
-        down.setEnabled(true);
-        if (audio.getStreamVolume(AudioManager.STREAM_MUSIC) == audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) {
-            Toast.makeText(getApplicationContext(), "Maximum Volume Reached", Toast.LENGTH_SHORT).show();
-            up.setEnabled(false);
+        try {
+            audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0);
+            volume.setText(""+audio.getStreamVolume(AudioManager.STREAM_MUSIC));
+            down.setEnabled(true);
+            if (audio.getStreamVolume(AudioManager.STREAM_MUSIC) == audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) {
+                Toast.makeText(getApplicationContext(), "Maximum Volume Reached", Toast.LENGTH_SHORT).show();
+                up.setEnabled(false);
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 
     public void lower(View view) {
         audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
-        volume.setText(audio.getStreamVolume(AudioManager.STREAM_MUSIC));
+        volume.setText(""+audio.getStreamVolume(AudioManager.STREAM_MUSIC));
         up.setEnabled(true);
         if (audio.getStreamVolume(AudioManager.STREAM_MUSIC) == 0) {
             Toast.makeText(getApplicationContext(), "Minimum Volume Reached", Toast.LENGTH_SHORT).show();
