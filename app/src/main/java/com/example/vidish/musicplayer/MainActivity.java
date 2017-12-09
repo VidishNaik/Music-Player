@@ -3,10 +3,8 @@ package com.example.vidish.musicplayer;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -86,8 +84,8 @@ public class MainActivity extends AppCompatActivity {
         reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.reset();
-                //mediaPlayer = MediaPlayer.create(MainActivity.this,songs[0]);
+                mediaPlayer.seekTo(0);
+                mediaPlayer.pause();
                 play.setEnabled(true);
                 play.setText("Play");
                 reset.setEnabled(false);
@@ -102,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 setMediaPlayer((++curr)%2);
                 play.setText("Pause");
                 mediaPlayer.start();
+                reset.setEnabled(true);
             }
         });
         audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
