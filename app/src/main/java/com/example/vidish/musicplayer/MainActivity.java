@@ -5,6 +5,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -27,8 +29,6 @@ public class MainActivity extends AppCompatActivity {
         final Button reset = (Button) findViewById(R.id.stop_button);
         final Button next = (Button) findViewById(R.id.next_button);
 
-        up = (Button) findViewById(R.id.volume_up);
-        down = (Button) findViewById(R.id.volume_down);
         reset.setEnabled(false);
 
         final AudioManager.OnAudioFocusChangeListener focusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
@@ -112,6 +112,36 @@ public class MainActivity extends AppCompatActivity {
         if (audio.getStreamVolume(AudioManager.STREAM_MUSIC) == audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC)) {
             up.setEnabled(false);
         }
+
+        volume.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                float y;
+                float y0 = volume.getY();
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_MOVE:
+                        y = y0 - motionEvent.getY();
+                        Log.v("AAAAAAAAAAAAA", "" + y / 250);
+                        if (y < 0)
+                            for (int i = 0; i < (int) y * -1 / 250; i++) {
+                                audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
+                                volume.setText("" + audio.getStreamVolume(AudioManager.STREAM_MUSIC));
+                            }
+                        else if (y > 0)
+                            for (int i = 0; i < (int) y / 250; i++) {
+                                audio.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0);
+                                volume.setText("" + audio.getStreamVolume(AudioManager.STREAM_MUSIC));
+                            }
+                        return true;
+                    case MotionEvent.ACTION_DOWN:
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 
     public void raise(View view) {
